@@ -10,7 +10,7 @@ import {
 import { useRef, useState } from "react";
 
 interface FileUploadProps {
-  onSuccess: (res: any) => void;
+  onSuccess: (res: unknown) => void;
   onProgress?: (progress: number) => void;
   fileType?: "image" | "video";
 }
@@ -49,22 +49,26 @@ const FileUpload = ({ onSuccess, onProgress, fileType }: FileUploadProps) => {
         file,
         fileName: file.name,
         publicKey: process.env.NEXT_PUBLIC_PUBLIC_KEY!,
-        signature: auth.signature,
-        expire: auth.expire,
-        token: auth.token,
+        signature: auth.authenticationParameters.signature,
+        expire: auth.authenticationParameters.expire,
+        token: auth.authenticationParameters.token,
         onProgress: (event) => {
-          if(event.lengthComputable && onProgress){
+          if (event.lengthComputable && onProgress) {
             const percent = (event.loaded / event.total) * 100;
             onProgress(Math.round(percent))
           }
         },
-        
+
       });
-      onSuccess(res)
+      if (typeof onSuccess === "function") {
+        onSuccess(res);
+      } else {
+        console.warn("onSuccess is not a function", onSuccess);
+      }
     } catch (error) {
-        console.error("Upload failed", error)
+      console.error("Upload failed", error)
     } finally {
-        setUploading(false)
+      setUploading(false)
     }
   };
 

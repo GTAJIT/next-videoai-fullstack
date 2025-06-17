@@ -1,21 +1,21 @@
 import { authOptions } from "@/lib/auth";
-import { dbConnect } from "@/lib/db";
+import { connectToDatabase } from "@/lib/db";
 import Video, { IVideo } from "@/models/Video";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    await dbConnect();
+    await connectToDatabase();
     const videos = await Video.find({}).sort({ createdAt: -1 }).lean();
-    if (!videos || VideoColorSpace.length === 0) {
+    if (!videos || videos.length === 0) {
       return NextResponse.json([], { status: 200 });
     }
     return NextResponse.json(videos);
   } catch (error) {
     return NextResponse.json(
       { error: `Failed to fetch videos: ${error}` },
-      { status: 500 }
+      { status: 406 }
     );
   }
 }
@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    await dbConnect();
+    await connectToDatabase();
     const body: IVideo = await request.json();
     if (
       !body.title ||

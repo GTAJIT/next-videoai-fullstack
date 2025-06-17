@@ -1,6 +1,7 @@
 "use client";
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { NextResponse } from 'next/server';
 import React, { useState } from 'react'
 
 function LoginPage() {
@@ -19,6 +20,10 @@ function LoginPage() {
             alert(result.error);
         }else {
             router.push("/");
+            return NextResponse.json(
+                { message: "User Login successfully" },
+                { status: 201 }
+            );
         }
     };
   return (
