@@ -3,6 +3,7 @@
 import { useState } from "react";
 import FileUpload from "./FileUpload";
 import { VIDEO_DIMENSIONS } from "@/models/Video";
+import { Upload, CheckCircle2, AlertCircle } from "lucide-react";
 
 export default function VideoUploadForm() {
   const [title, setTitle] = useState("");
@@ -10,13 +11,13 @@ export default function VideoUploadForm() {
   const [videoUrl, setVideoUrl] = useState("");
   const [thumbnailUrl, setThumbnailUrl] = useState("");
   const [uploading, setUploading] = useState(false);
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState({ text: "", type: "" });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!title || !description || !videoUrl) {
-      return setMessage("All fields are required.");
+      return setMessage({ text: "All fields are required.", type: "error" });
     }
 
     setUploading(true);
@@ -28,7 +29,7 @@ export default function VideoUploadForm() {
           title,
           description,
           videoUrl,
-          thumbnailUrl: thumbnailUrl || videoUrl + "/ik-thumbnail.jpg", // fallback thumbnail
+          thumbnailUrl: thumbnailUrl || videoUrl + "/ik-thumbnail.jpg",
           transformation: {
             height: VIDEO_DIMENSIONS.height,
             width: VIDEO_DIMENSIONS.width,
@@ -38,63 +39,111 @@ export default function VideoUploadForm() {
 
       if (!res.ok) throw new Error("Failed to upload video metadata");
 
-      setMessage("Video uploaded successfully!");
+      setMessage({ text: "Video uploaded successfully!", type: "success" });
       setTitle("");
       setDescription("");
       setVideoUrl("");
       setThumbnailUrl("");
     } catch (err) {
       console.error(err);
-      setMessage("Error uploading video");
+      setMessage({ text: "Error uploading video", type: "error" });
     } finally {
       setUploading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 max-w-lg mx-auto">
-      <div>
-        <label className="block font-medium">Video Title</label>
-        <input
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          className="input input-bordered w-full"
-          required
-        />
+    <div className="max-w-2xl mx-auto p-6">
+      <div className="bg-base-200 rounded-lg p-6 shadow-lg">
+        <h2 className="text-2xl font-bold mb-6 text-center">Upload New Video</h2>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text font-medium">Video Title</span>
+            </label>
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="input input-bordered w-full focus:input-primary"
+              placeholder="Enter video title"
+              required
+            />
+          </div>
+
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text font-medium">Description</span>
+            </label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="textarea textarea-bordered min-w-[500px] focus:textarea-primary"
+              placeholder="Enter video description"
+              required
+            />
+          </div>
+
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text font-medium">Upload Video</span>
+            </label>
+            <div className="border-2 border-dashed border-base-300 rounded-lg p-6">
+              {!videoUrl ? (
+                <FileUpload
+                  fileType="video"
+                  onSuccess={(res: unknown) => {
+                    if (res && typeof res === "object" && "url" in res) {
+                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                      setVideoUrl((res as { url: any }).url);
+                      setMessage({ text: "Video uploaded successfully!", type: "success" });
+                    }
+                  }}
+                />
+              ) : (
+                <div className="flex items-center gap-2 text-success">
+                  <CheckCircle2 className="w-5 h-5" />
+                  <span className="text-sm">Video uploaded successfully</span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            className="btn btn-primary w-full gap-2"
+            disabled={uploading || !videoUrl}
+          >
+            {uploading ? (
+              <>
+                <span className="loading loading-spinner"></span>
+                Processing...
+              </>
+            ) : (
+              <>
+                <Upload className="w-5 h-5" />
+                Submit Video
+              </>
+            )}
+          </button>
+
+          {message.text && (
+            <div
+              className={`alert ${
+                message.type === "success" ? "alert-success" : "alert-error"
+              } mt-4`}
+            >
+              {message.type === "success" ? (
+                <CheckCircle2 className="w-5 h-5" />
+              ) : (
+                <AlertCircle className="w-5 h-5" />
+              )}
+              <span>{message.text}</span>
+            </div>
+          )}
+        </form>
       </div>
-
-      <div>
-        <label className="block font-medium">Description</label>
-        <textarea
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className="textarea textarea-bordered w-full"
-          required
-        />
-      </div>
-
-      <div>
-        <label className="block font-medium">Upload Video</label>
-        <FileUpload
-          fileType="video"
-          onSuccess={(res: any) => {
-            console.log("Upload success:", res);
-            setVideoUrl(res.url);
-          }}
-        />
-        {videoUrl && <p className="text-sm mt-1 text-success">Uploaded to: {videoUrl}</p>}
-      </div>
-
-      <button
-        type="submit"
-        className="btn btn-primary w-full"
-        disabled={uploading || !videoUrl}
-      >
-        {uploading ? "Submitting..." : "Submit Video"}
-      </button>
-
-      {message && <p className="text-center mt-2">{message}</p>}
-    </form>
+    </div>
   );
 }

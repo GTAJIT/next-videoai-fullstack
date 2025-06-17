@@ -28,7 +28,8 @@ userSchema.pre('save', async function (next) {
         }
         next();
     } catch (error) {
-        next(error);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        next(error as any);
     }
 });
 

@@ -15,10 +15,10 @@ export default async function VideoPage() {
       return fullUrl; // fallback in case it's already a path
     }
   }
-
+ // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const videos: IVideo[] = rawVideos.map((video: any) => ({
     _id: video._id.toString(),
-    userId: video.userId?.toString() ?? "", // <-- ✅ add this
+    userId: video.userId?.toString() ?? "",
     title: video.title,
     description: video.description,
     videoUrl: extractImageKitPath(video.videoUrl),
@@ -29,8 +29,8 @@ export default async function VideoPage() {
       width: video.transformation?.width ?? 1080,
       quality: video.transformation?.quality ?? 100,
     },
-    createdAt: new Date(video.createdAt).toISOString(),
-    updatedAt: new Date(video.updatedAt).toISOString(),
+    createdAt: new Date(video.createdAt),
+    updatedAt: new Date(video.updatedAt),
     __v: video.__v,
   }));
 
