@@ -12,6 +12,7 @@
     "@imagekit/next": "^2.1.2",
     "@imagekit/react": "^5.0.1",
     "@types/bcryptjs": "^2.4.6",
+    "@vercel/speed-insights": "^1.2.0",
     "bcryptjs": "^3.0.2",
     "env": "^0.0.2",
     "imagekitio-next": "^1.0.1",
