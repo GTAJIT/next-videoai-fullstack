@@ -43,11 +43,11 @@ export async function POST(request: NextRequest) {
     const videoData = {
       ...body,
       controls: body?.controls ?? true,
-      trnsformation: {
-        height: 1920,
-        width: 1080,
-        quality: body.transformation?.quality ?? 100,
-      },
+      // trnsformation: {
+      //   height: 1920,
+      //   width: 1080,
+      //   quality: body.transformation?.quality ?? 100,
+      // },
     };
     const newVideo = await Video.create(videoData);
     return NextResponse.json(newVideo);

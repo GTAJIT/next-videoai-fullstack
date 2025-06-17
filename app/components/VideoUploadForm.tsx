@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import FileUpload from "./FileUpload";
-import { VIDEO_DIMENSIONS } from "@/models/Video";
 import { Upload, CheckCircle2, AlertCircle } from "lucide-react";
 
 export default function VideoUploadForm() {
@@ -30,10 +29,6 @@ export default function VideoUploadForm() {
           description,
           videoUrl,
           thumbnailUrl: thumbnailUrl || videoUrl + "/ik-thumbnail.jpg",
-          transformation: {
-            height: VIDEO_DIMENSIONS.height,
-            width: VIDEO_DIMENSIONS.width,
-          },
         }),
       });
 

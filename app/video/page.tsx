@@ -15,7 +15,7 @@ export default async function VideoPage() {
       return fullUrl; // fallback in case it's already a path
     }
   }
- // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const videos: IVideo[] = rawVideos.map((video: any) => ({
     _id: video._id.toString(),
     userId: video.userId?.toString() ?? "",
@@ -24,17 +24,17 @@ export default async function VideoPage() {
     videoUrl: extractImageKitPath(video.videoUrl),
     thumbnailUrl: video.thumbnailUrl,
     controls: video.controls ?? true,
-    transformation: {
-      height: video.transformation?.height ?? 1920,
-      width: video.transformation?.width ?? 1080,
-      quality: video.transformation?.quality ?? 100,
-    },
+    // transformation: {
+    //   height: video.transformation?.height ?? 1920,
+    //   width: video.transformation?.width ?? 1080,
+    //   quality: video.transformation?.quality ?? 100,
+    // },
     createdAt: new Date(video.createdAt),
     updatedAt: new Date(video.updatedAt),
     __v: video.__v,
   }));
-
   console.log(videos.map(video => video.videoUrl), "Processed video URLs");
+
 
   if (!videos || videos.length === 0) {
     return <p className="text-center">No videos available</p>;

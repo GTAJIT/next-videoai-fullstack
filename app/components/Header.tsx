@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useSession, signOut } from "next-auth/react";
 import { Home, User, Video, Upload, LogOut} from "lucide-react";
 import { useNotification } from "./Notification";
@@ -40,7 +41,7 @@ export default function Header() {
               className="btn btn-ghost btn-circle hidden  avatar"
             >
               {session?.user?.image ? (
-                <img
+                <Image
                   src={session.user.image}
                   alt={session.user.name || "User"}
                   className="rounded-full"
