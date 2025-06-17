@@ -4,7 +4,9 @@ import { IKVideo } from "imagekitio-next";
 import Link from "next/link";
 import { IVideo } from "@/models/Video";
 
+
 export default function VideoComponent({ video }: { video: IVideo }) {
+  console.log(video.videoUrl, "Video URL in VideoComponent");
   return (
     <div className="card bg-base-100 shadow hover:shadow-lg transition-all duration-300">
       <figure className="relative px-4 pt-4">
@@ -14,6 +16,7 @@ export default function VideoComponent({ video }: { video: IVideo }) {
             style={{ aspectRatio: "9/16" }}
           >
             <IKVideo
+              urlEndpoint={process.env.NEXT_PUBLIC_URL_ENDPOINT!}
               path={video.videoUrl}
               transformation={[
                 {
